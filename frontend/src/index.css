@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+/* ============================================================
+   OMNISPACE DESIGN TOKENS — "Ink & Signal"
+   A control-tower aesthetic for B2B agency workspaces.
+   Dark ink surfaces for navigation, paper-light canvas for work,
+   one decisive signal-blue for action, status colors that read
+   instantly across Kanban, badges, and client-facing progress.
+   ============================================================ */
+
+@theme {
+  /* --- Surfaces --- */
+  --color-ink-950: #0b0e14;
+  --color-ink-900: #11151d;
+  --color-ink-800: #181d28;
+  --color-ink-700: #232a39;
+  --color-ink-600: #323b4f;
+  --color-ink-500: #4a5468;
+
+  --color-paper-50: #f7f7f5;
+  --color-paper-100: #efeeea;
+  --color-paper-200: #e3e1da;
+
+  /* --- Brand / Signal --- */
+  --color-signal-50: #eef1fd;
+  --color-signal-100: #dbe2fb;
+  --color-signal-300: #93a6ef;
+  --color-signal-500: #3454d1;
+  --color-signal-600: #2a44ad;
+  --color-signal-700: #233a93;
+
+  /* --- Status --- */
+  --color-status-done: #16a37a;
+  --color-status-done-bg: #e3f6ee;
+  --color-status-progress: #3454d1;
+  --color-status-progress-bg: #eef1fd;
+  --color-status-review: #7c5cd6;
+  --color-status-review-bg: #f0ecfb;
+  --color-status-todo: #6b7385;
+  --color-status-todo-bg: #eceef1;
+
+  --color-priority-high: #d1483c;
+  --color-priority-high-bg: #fcebe9;
+  --color-priority-medium: #b8780f;
+  --color-priority-medium-bg: #fbf0dd;
+  --color-priority-low: #2f6fb0;
+  --color-priority-low-bg: #e9f1f9;
+
+  /* --- Text --- */
+  --color-text-primary: #11151d;
+  --color-text-secondary: #4a5468;
+  --color-text-muted: #8891a1;
+  --color-text-inverse: #f7f7f5;
+
+  /* --- Borders --- */
+  --color-border-subtle: #e3e1da;
+  --color-border-default: #d4d1c8;
+
+  /* --- Fonts --- */
+  --font-display: "Manrope", "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "ui-monospace", monospace;
+
+  /* --- Radius (deliberately tight — operational, not playful) --- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+
+  /* --- Shadow: a single, quiet elevation system --- */
+  --shadow-card: 0 1px 2px 0 rgb(17 21 29 / 0.04), 0 1px 3px 0 rgb(17 21 29 / 0.06);
+  --shadow-popover: 0 4px 6px -1px rgb(17 21 29 / 0.08), 0 10px 15px -3px rgb(17 21 29 / 0.06);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border-subtle);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--color-paper-50);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal-500);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-signal-100);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  /* Tenant-status edge: the signature sidebar indicator */
+  .tenant-rail {
+    box-shadow: inset 3px 0 0 0 var(--color-signal-500);
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-ink-600) transparent;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.18s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in {
+      animation: none;
+    }
+  }
+}
