@@ -1,0 +1,23 @@
+{
+  "name": "omnispace",
+  "version": "1.0.0",
+  "description": "OmniSpace B2B Multi-Tenant Workspace & Client Portal Engine — Monorepo root",
+  "private": true,
+  "scripts": {
+    "dev:backend": "cd backend && npm run start:dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "lint": "cd backend && npm run lint && cd ../frontend && npm run lint",
+    "format": "cd backend && npm run format",
+    "typecheck": "cd backend && npx tsc --noEmit && cd ../frontend && npx tsc --noEmit",
+    "prisma:generate": "cd backend && npm run prisma:generate",
+    "prisma:migrate": "cd backend && npm run prisma:migrate",
+    "prisma:deploy": "cd backend && npm run prisma:deploy",
+    "prisma:seed": "cd backend && npm run prisma:seed"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

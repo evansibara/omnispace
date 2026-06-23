@@ -1,0 +1,41 @@
+# =============================================================================
+# Frontend — .dockerignore
+# =============================================================================
+
+# ─── Node Modules (reinstalled inside Docker) ─────────────────────────────
+node_modules/
+
+# ─── Build Outputs (rebuilt inside Docker) ────────────────────────────────
+dist/
+dist-ssr/
+
+# ─── Environment Files ────────────────────────────────────────────────────
+# Note: Vite embeds env vars at BUILD time using ARG/ENV in Dockerfile.
+# The .env file should not be copied into the image.
+.env
+.env.local
+.env.*.local
+
+# ─── OS & Editor Files ────────────────────────────────────────────────────
+.DS_Store
+**/.DS_Store
+.vscode/
+.idea/
+
+# ─── Logs ─────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+
+# ─── TypeScript Build Artifacts ───────────────────────────────────────────
+*.tsbuildinfo
+
+# ─── Git ──────────────────────────────────────────────────────────────────
+.git/
+.gitignore
+
+# ─── Docker ───────────────────────────────────────────────────────────────
+Dockerfile
+.dockerignore
+
+# ─── Docs ─────────────────────────────────────────────────────────────────
+README.md

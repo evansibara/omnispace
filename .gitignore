@@ -1,0 +1,70 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules/
+
+# Build & Production Outputs
+dist/
+dist-ssr/
+build/
+out/
+
+# Environment variables (SANGAT PENTING! — NEVER COMMIT SECRETS)
+.env
+.env.local
+.env.*.local
+*.local
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# OS Generated Files
+.DS_Store
+**/.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ─── Docker & Infrastructure ─────────────────────────────────────────────────
+# Docker volume data directories (if mounted locally)
+.docker-volumes/
+postgres-data/
+redis-data/
+
+# Docker override files (local dev overrides)
+docker-compose.override.yml
+
+# SSL/TLS certificates (never commit certs!)
+infrastructure/certs/
+*.pem
+*.key
+*.crt
+*.p12
+
+# ─── Prisma ──────────────────────────────────────────────────────────────────
+# Generated Prisma client (should be regenerated via `prisma generate`)
+backend/node_modules/.prisma/
