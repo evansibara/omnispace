@@ -1,0 +1,58 @@
+# =============================================================================
+# Backend — .dockerignore
+# Exclude files that should NOT be copied into the Docker build context.
+# Keeping the build context small speeds up image builds significantly.
+# =============================================================================
+
+# ─── Node Modules (rebuilt inside Docker) ─────────────────────────────────
+node_modules/
+
+# ─── Build Outputs (rebuilt inside Docker) ────────────────────────────────
+dist/
+build/
+
+# ─── Prisma Generated Files (regenerated inside Docker) ───────────────────
+# Keep prisma/schema.prisma but exclude generated client
+node_modules/.prisma/
+
+# ─── Environment Files (secrets must not leak into image layers) ──────────
+.env
+.env.local
+.env.*.local
+
+# ─── Development & Testing ─────────────────────────────────────────────────
+coverage/
+*.test.ts
+*.spec.ts
+jest.config.*
+__tests__/
+__mocks__/
+
+# ─── OS & Editor Files ────────────────────────────────────────────────────
+.DS_Store
+**/.DS_Store
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+
+# ─── Logs ─────────────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+
+# ─── TypeScript Build Artifacts ───────────────────────────────────────────
+*.tsbuildinfo
+
+# ─── Git ──────────────────────────────────────────────────────────────────
+.git/
+.gitignore
+
+# ─── Docker ───────────────────────────────────────────────────────────────
+Dockerfile
+.dockerignore
+
+# ─── Docs ─────────────────────────────────────────────────────────────────
+README.md
+CHANGELOG.md
+docs/
