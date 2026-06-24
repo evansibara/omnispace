@@ -4,18 +4,34 @@
 
 **B2B Multi-Tenant Workspace & Client Portal Engine**
 
-[![CI](https://github.com/evansibara/omnispace/actions/workflows/ci.yml/badge.svg)](https://github.com/evansibara/omnispace/actions/workflows/ci.yml)
-[![CD](https://github.com/evansibara/omnispace/actions/workflows/cd.yml/badge.svg)](https://github.com/evansibara/omnispace/actions/workflows/cd.yml)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![CI](https://github.com/xeesoxee/omnispace/actions/workflows/ci.yml/badge.svg)](https://github.com/xeesoxee/omnispace/actions/workflows/ci.yml)
+[![CD](https://github.com/xeesoxee/omnispace/actions/workflows/cd.yml/badge.svg)](https://github.com/xeesoxee/omnispace/actions/workflows/cd.yml)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![NestJS](https://img.shields.io/badge/NestJS-10.x-E0234E?logo=nestjs&logoColor=white)](https://nestjs.com/)
 [![React](https://img.shields.io/badge/React-19.x-61DAFB?logo=react&logoColor=white)](https://react.dev/)
-[![License](https://img.shields.io/badge/License-UNLICENSED-red.svg)](#)
+[![License](https://img.shields.io/badge/License-UNLICENSED-red.svg)](#-lisensi)
 
 <p>
   Platform workspace B2B multi-tenant yang memisahkan jalur internal agensi dari portal klien eksternal secara aman — dibangun dengan standar industri enterprise.
 </p>
 
 </div>
+
+---
+
+## 📑 Daftar Isi
+
+- [Tentang Proyek](#-tentang-proyek)
+- [Arsitektur & Tech Stack](#-arsitektur--tech-stack)
+- [Keamanan & Multi-Tenancy](#-keamanan--multi-tenancy)
+- [Panduan Memulai](#-panduan-memulai-quick-start)
+- [Menggunakan Makefile](#-menggunakan-makefile)
+- [Development & Quality Assurance](#-development--quality-assurance)
+- [Docker Images](#-docker-images)
+- [Struktur Folder Detail](#-struktur-folder-detail)
+- [Environment Variables](#-environment-variables)
+- [Troubleshooting](#-troubleshooting)
+- [Lisensi](#-lisensi)
 
 ---
 
@@ -39,15 +55,13 @@ omnispace/
 └── .github/          # CI/CD Workflows (GitHub Actions)
 ```
 
----
-
 ### ⚙️ Backend (`/backend`)
 
 RESTful API berbasis **NestJS** dengan arsitektur modular dan keamanan berlapis.
 
 | Kategori | Teknologi |
 |---|---|
-| **Runtime** | Node.js 20, TypeScript 5.x |
+| **Runtime** | Node.js 20, TypeScript 6.x |
 | **Framework** | NestJS 10 |
 | **ORM & Database** | Prisma 5, PostgreSQL 16 |
 | **Auth** | JWT (`@nestjs/jwt`), bcryptjs |
@@ -56,15 +70,13 @@ RESTful API berbasis **NestJS** dengan arsitektur modular dan keamanan berlapis.
 | **Validasi** | class-validator, class-transformer |
 | **Linting** | ESLint (`@typescript-eslint`), Prettier |
 
----
-
 ### 🎨 Frontend (`/frontend`)
 
 *Single Page Application* modern berbasis **React 19** dengan DX dan performa tinggi.
 
 | Kategori | Teknologi |
 |---|---|
-| **Core** | React 19, TypeScript 6.x, Vite 8 |
+| **Core** | React 19, TypeScript 6.x, Vite 8 (Rolldown) |
 | **Routing** | React Router DOM 7 |
 | **Server State** | TanStack React Query 5 |
 | **Global State** | Zustand 5 |
@@ -74,9 +86,7 @@ RESTful API berbasis **NestJS** dengan arsitektur modular dan keamanan berlapis.
 | **Charts** | Recharts 3 |
 | **Notifikasi** | Sonner |
 | **Icons** | Lucide React |
-| **Linting** | ESLint 10, eslint-plugin-react-refresh |
-
----
+| **Linting** | ESLint, eslint-plugin-react-refresh |
 
 ### 🐳 Infrastructure (`/infrastructure`)
 
@@ -91,14 +101,12 @@ Ekosistem containerisasi lengkap untuk development dan production.
 | **Registry** | GitHub Container Registry (GHCR) |
 
 **Dua mode deployment:**
-- `docker-compose.yml` — development (hanya infrastruktur: Postgres + Redis)
-- `docker-compose.prod.yml` — production (full stack: Postgres + Redis + Backend + Nginx/Frontend)
-
----
+- `docker-compose.yml` — development (hanya infrastruktur: Postgres + Redis; backend & frontend jalan di host untuk hot-reload)
+- `docker-compose.prod.yml` — production (full stack: Postgres + Redis + Backend + Nginx/Frontend, semua dalam satu Docker network internal)
 
 ### 🔄 CI/CD Pipeline (`/.github/workflows`)
 
-Otomatisasi penuh dengan GitHub Actions untuk setiap push dan pull request.
+Otomatisasi penuh dengan GitHub Actions (`ci.yml` & `cd.yml`) untuk setiap push dan pull request.
 
 ```
 Push / PR ke main atau develop
@@ -146,6 +154,8 @@ OmniSpace memisahkan dua jalur akses secara eksplisit:
 
 Setiap route dilindungi `<ProtectedRoute allowedRoles={[...]}>` — klien yang mencoba menebak URL `/projects` akan di-redirect, bukan mendapat halaman kosong dengan navigasi yang bocor.
 
+Isolasi data antar tenant ditegakkan di level query database (setiap query disaring dengan `tenantId`), bukan hanya di level UI — sehingga tetap aman meskipun seseorang mencoba mengakses API secara langsung di luar frontend.
+
 ---
 
 ## 🚀 Panduan Memulai (Quick Start)
@@ -159,7 +169,7 @@ Setiap route dilindungi `<ProtectedRoute allowedRoles={[...]}>` — klien yang m
 ### 1. Clone & Konfigurasi Environment
 
 ```bash
-git clone https://github.com/<username>/omnispace.git
+git clone https://github.com/xeesoxee/omnispace.git
 cd omnispace
 
 # Salin semua template environment
@@ -169,8 +179,6 @@ cp frontend/.env.example frontend/.env
 ```
 
 Sesuaikan variabel di dalam masing-masing file `.env` jika diperlukan.
-
----
 
 ### 2. Jalankan via Docker (Direkomendasikan — Production Mode)
 
@@ -186,7 +194,7 @@ docker compose -f docker-compose.prod.yml up -d --build
 | **Backend API** | http://localhost/api/v1 |
 | **Health Check** | http://localhost/api/v1/health |
 
----
+> 💡 Di mode ini, semua service (`postgres`, `redis`, `backend`, `nginx`) berjalan dalam satu Docker network internal dan saling terhubung lewat **nama service** (`postgres`, `redis`, `backend`) — bukan `container_name`. Lihat bagian [Troubleshooting](#-troubleshooting) kalau menemukan error `ENOTFOUND` terkait hal ini.
 
 ### 3. Jalankan Mode Development (Hot-Reload)
 
@@ -203,7 +211,7 @@ docker compose up -d
 ```bash
 cd backend
 npm install
-cp .env.example .env   # isi DATABASE_URL, JWT_SECRET, REDIS_* dll
+cp .env.example .env   # isi DATABASE_URL, JWT_SECRET, dll
 npm run prisma:generate
 npm run prisma:migrate
 npm run start:dev
@@ -221,6 +229,19 @@ npm run dev
 ```
 
 Frontend tersedia di: `http://localhost:5173`
+
+---
+
+## 🛠️ Menggunakan Makefile
+
+Repo ini menyediakan `Makefile` di root sebagai shortcut. Target yang dipakai secara default oleh workflow proyek ini:
+
+```bash
+make dev
+```
+Menyalakan infrastruktur (Postgres + Redis via Docker) **sekaligus** backend & frontend di host — setara dengan menjalankan langkah 3A–3C di atas secara berurutan, tapi dalam satu perintah.
+
+> 📌 `Makefile` mungkin memiliki target tambahan lain (misalnya untuk build, clean, atau logs) — buka isi `Makefile` di root project untuk daftar lengkapnya, karena daftar di atas hanya mencakup target yang sudah dikonfirmasi dipakai tim.
 
 ---
 
@@ -282,12 +303,12 @@ Image production di-build dan di-push otomatis ke **GitHub Container Registry (G
 
 ```bash
 # Pull image terbaru
-docker pull ghcr.io/<owner>/omnispace-backend:latest
-docker pull ghcr.io/<owner>/omnispace-frontend:latest
+docker pull ghcr.io/xeesoxee/omnispace-backend:latest
+docker pull ghcr.io/xeesoxee/omnispace-frontend:latest
 
 # Pull versi spesifik via SHA (untuk rollback)
-docker pull ghcr.io/<owner>/omnispace-backend:sha-<commit-sha>
-docker pull ghcr.io/<owner>/omnispace-frontend:sha-<commit-sha>
+docker pull ghcr.io/xeesoxee/omnispace-backend:sha-<commit-sha>
+docker pull ghcr.io/xeesoxee/omnispace-frontend:sha-<commit-sha>
 ```
 
 ---
@@ -338,6 +359,7 @@ omnispace/
 │
 ├── docker-compose.yml               # Dev: Postgres + Redis only
 ├── docker-compose.prod.yml          # Prod: full stack
+├── Makefile                         # Shortcut command (lihat bagian Makefile)
 └── README.md
 ```
 
@@ -347,20 +369,21 @@ omnispace/
 
 ### Backend (`backend/.env`)
 
+> ⚠️ Backend NestJS **hanya membaca `DATABASE_URL`** untuk koneksi ke PostgreSQL (lewat Prisma) — variabel `POSTGRES_USER`/`POSTGRES_PASSWORD`/`POSTGRES_DB` terpisah **tidak dikonsumsi langsung oleh kode backend**, jadi tidak perlu didefinisikan di file ini. Variabel itu hanya relevan di `.env` root (dipakai oleh container `postgres` itu sendiri lewat `docker-compose.yml`).
+
 ```env
 NODE_ENV=development
 PORT=3000
 API_PREFIX=api/v1
 FRONTEND_URL=http://localhost:5173
 
-# Database
+# Database — satu-satunya variabel DB yang dibaca backend
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/omnispace?schema=public
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=omnispace
 
 # Auth
 JWT_SECRET=your-super-secret-jwt-key
+JWT_EXPIRES_IN=7d
+COOKIE_NAME=access_token
 
 # Redis
 REDIS_HOST=localhost
@@ -374,7 +397,9 @@ REDIS_PASSWORD=omnispace_redis_dev
 VITE_API_BASE_URL=http://localhost:3000/api/v1
 ```
 
-### Infrastructure (`infrastructure/.env` / `.env`)
+### Root / Infrastructure (`.env`)
+
+Variabel ini dikonsumsi oleh `docker-compose.yml` & `docker-compose.prod.yml` untuk konfigurasi container `postgres`, `redis`, dan `backend` saat dijalankan via Docker:
 
 ```env
 POSTGRES_USER=postgres
@@ -389,6 +414,44 @@ JWT_SECRET=your-super-secret-jwt-key
 FRONTEND_URL=https://yourdomain.com
 VITE_API_BASE_URL=/api/v1
 ```
+
+---
+
+## 🩹 Troubleshooting
+
+### `Error: getaddrinfo ENOTFOUND omnispace_postgres` / `omnispace_redis` saat menjalankan `docker-compose.prod.yml`
+
+**Sebab:** Di dalam Docker network internal, DNS antar-container hanya mengenali **nama service** (`postgres`, `redis`, `backend` — sesuai key di `services:`), **bukan** `container_name` (`omnispace_postgres`, `omnispace_redis`). Kalau environment variable backend (`POSTGRES_HOST`, `DATABASE_URL`, `REDIS_HOST`) diisi dengan `container_name`, resolusi DNS akan gagal dan request yang bergantung pada koneksi tersebut (misalnya login, yang butuh Redis untuk rate-limiter) akan menggantung sampai timeout.
+
+**Solusi:** Pastikan di `docker-compose.prod.yml`, environment backend memakai nama service:
+
+```yaml
+POSTGRES_HOST:  postgres   # bukan omnispace_postgres
+REDIS_HOST:     redis      # bukan omnispace_redis
+DATABASE_URL:   postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+```
+
+Lalu recreate container backend agar environment baru terbaca:
+```bash
+docker compose -f docker-compose.prod.yml up -d --force-recreate backend
+```
+
+### Frontend (di Docker) timeout terus saat memanggil backend yang jalan di host (mode hybrid)
+
+**Sebab:** Di dalam container, `localhost` merujuk ke container itu sendiri, bukan ke mesin host tempat backend (`npm run start:dev`) berjalan.
+
+**Solusi:** Pakai DNS internal Docker Desktop untuk menembus ke host:
+```env
+VITE_API_BASE_URL=http://host.docker.internal:3000/api/v1
+```
+Lalu restart container frontend agar env var terbaca ulang. *(Catatan: ini hanya relevan untuk setup hybrid — frontend di Docker, backend di host. Untuk mode full-Docker via `docker-compose.prod.yml`, gunakan path relatif `/api/v1` yang di-proxy oleh Nginx, bukan `host.docker.internal`.)*
+
+### Container "orphan" muncul setelah ganti/rename service di compose file
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --remove-orphans
+```
+Ini membersihkan container lama yang tidak lagi terdaftar di compose file aktif, supaya tidak membingungkan saat debugging (`docker compose ps -a` menampilkan container yang sudah tidak relevan).
 
 ---
 
