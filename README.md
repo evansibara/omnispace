@@ -169,7 +169,7 @@ Isolasi data antar tenant ditegakkan di level query database (setiap query disar
 ### 1. Clone & Konfigurasi Environment
 
 ```bash
-git clone https://github.com/xeesoxee/omnispace.git
+git clone https://github.com/evansibara/omnispace.git
 cd omnispace
 
 # Salin semua template environment
