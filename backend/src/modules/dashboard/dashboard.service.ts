@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { TaskStatus, UserRole } from '@prisma/client';
-import { PrismaService } from '../../prisma/prisma.service';
-import { AuthenticatedUser } from '../../common/types/jwt-payload.interface';
-import { DashboardMetrics } from './dashboard-metrics.interface';
+import { Injectable } from "@nestjs/common";
+import { TaskStatus, UserRole } from "@prisma/client";
+import { PrismaService } from "../../prisma/prisma.service";
+import { AuthenticatedUser } from "../../common/types/jwt-payload.interface";
+import { DashboardMetrics } from "./dashboard-metrics.interface";
 
 const TREND_WINDOW_DAYS = 30;
 const UPCOMING_MILESTONES_LIMIT = 5;
@@ -18,15 +18,22 @@ export class DashboardService {
     const prevWindowStart = new Date(windowStart);
     prevWindowStart.setDate(prevWindowStart.getDate() - TREND_WINDOW_DAYS);
 
-    const [totalProjects, projectsThisWindow, projectsPrevWindow] = await Promise.all([
-      this.prisma.project.count({ where: { tenantId: user.tenantId } }),
-      this.prisma.project.count({
-        where: { tenantId: user.tenantId, createdAt: { gte: windowStart, lte: now } },
-      }),
-      this.prisma.project.count({
-        where: { tenantId: user.tenantId, createdAt: { gte: prevWindowStart, lt: windowStart } },
-      }),
-    ]);
+    const [totalProjects, projectsThisWindow, projectsPrevWindow] =
+      await Promise.all([
+        this.prisma.project.count({ where: { tenantId: user.tenantId } }),
+        this.prisma.project.count({
+          where: {
+            tenantId: user.tenantId,
+            createdAt: { gte: windowStart, lte: now },
+          },
+        }),
+        this.prisma.project.count({
+          where: {
+            tenantId: user.tenantId,
+            createdAt: { gte: prevWindowStart, lt: windowStart },
+          },
+        }),
+      ]);
 
     const taskWhereBase = {
       tenantId: user.tenantId,
@@ -40,40 +47,56 @@ export class DashboardService {
         where: { ...taskWhereBase, createdAt: { gte: windowStart, lte: now } },
       }),
       this.prisma.task.count({
-        where: { ...taskWhereBase, createdAt: { gte: prevWindowStart, lt: windowStart } },
+        where: {
+          ...taskWhereBase,
+          createdAt: { gte: prevWindowStart, lt: windowStart },
+        },
       }),
     ]);
 
     const activeProjects = await this.prisma.project.findMany({
-      where: { tenantId: user.tenantId, status: { not: 'COMPLETED' } },
+      where: { tenantId: user.tenantId, status: { not: "COMPLETED" } },
       select: { completionRate: true },
     });
     const averageCompletionRate = activeProjects.length
       ? Math.round(
-          activeProjects.reduce((sum: number, p: (typeof activeProjects)[number]) => sum + p.completionRate, 0) /
-            activeProjects.length,
+          activeProjects.reduce(
+            (sum: number, p: (typeof activeProjects)[number]) =>
+              sum + p.completionRate,
+            0,
+          ) / activeProjects.length,
         )
       : 0;
 
     const upcomingProjects = await this.prisma.project.findMany({
-      where: { tenantId: user.tenantId, status: { not: 'COMPLETED' } },
-      orderBy: { targetDeadline: 'asc' },
+      where: { tenantId: user.tenantId, status: { not: "COMPLETED" } },
+      orderBy: { targetDeadline: "asc" },
       take: UPCOMING_MILESTONES_LIMIT,
-      select: { id: true, title: true, targetDeadline: true, completionRate: true },
+      select: {
+        id: true,
+        title: true,
+        targetDeadline: true,
+        completionRate: true,
+      },
     });
 
     return {
       totalProjects,
-      totalProjectsTrend: this.percentChange(projectsThisWindow, projectsPrevWindow),
+      totalProjectsTrend: this.percentChange(
+        projectsThisWindow,
+        projectsPrevWindow,
+      ),
       activeTasks,
       activeTasksTrend: this.percentChange(tasksThisWindow, tasksPrevWindow),
       averageCompletionRate,
-      upcomingMilestones: upcomingProjects.map((p: (typeof upcomingProjects)[number]) => ({
-        projectId: p.id,
-        projectTitle: p.title,
-        deadline: p.targetDeadline.toISOString(),
-        completionRate: p.completionRate,
-      })),
+      upcomingMilestones: upcomingProjects.map(
+        (p: (typeof upcomingProjects)[number]) => ({
+          projectId: p.id,
+          projectTitle: p.title,
+          deadline: p.targetDeadline.toISOString(),
+          completionRate: p.completionRate,
+        }),
+      ),
     };
   }
 

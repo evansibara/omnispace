@@ -1,7 +1,10 @@
-import { Module } from '@nestjs/common';
-import { ProjectTasksController, TaskStatusController } from './tasks.controller';
-import { TasksService } from './tasks.service';
-import { ProjectsModule } from '../projects/projects.module';
+import { Module } from "@nestjs/common";
+import {
+  ProjectTasksController,
+  TaskStatusController,
+} from "./tasks.controller";
+import { TasksService } from "./tasks.service";
+import { ProjectsModule } from "../projects/projects.module";
 
 @Module({
   imports: [ProjectsModule],

@@ -1,10 +1,14 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { TaskStatus } from '@prisma/client';
-import { PrismaService } from '../../prisma/prisma.service';
-import { ProjectsService } from '../projects/projects.service';
-import { AuthenticatedUser } from '../../common/types/jwt-payload.interface';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { TaskStatus } from "@prisma/client";
+import { PrismaService } from "../../prisma/prisma.service";
+import { ProjectsService } from "../projects/projects.service";
+import { AuthenticatedUser } from "../../common/types/jwt-payload.interface";
+import { CreateTaskDto } from "./dto/create-task.dto";
+import { UpdateTaskStatusDto } from "./dto/update-task-status.dto";
 
 const taskSelect = {
   id: true,
@@ -35,7 +39,7 @@ export class TasksService {
     const tasks = await this.prisma.task.findMany({
       where: { projectId, tenantId: user.tenantId },
       select: taskSelect,
-      orderBy: [{ status: 'asc' }, { position: 'asc' }],
+      orderBy: [{ status: "asc" }, { position: "asc" }],
     });
 
     return tasks.map((t) => this.toDto(t));
@@ -50,7 +54,9 @@ export class TasksService {
         select: { id: true },
       });
       if (!assignee) {
-        throw new BadRequestException('assigneeId does not refer to a valid user in this tenant.');
+        throw new BadRequestException(
+          "assigneeId does not refer to a valid user in this tenant.",
+        );
       }
     }
 
@@ -63,7 +69,7 @@ export class TasksService {
         tenantId: user.tenantId,
         projectId,
         title: dto.title,
-        description: dto.description ?? '',
+        description: dto.description ?? "",
         priority: dto.priority,
         status: TaskStatus.TODO,
         position: todoCount,
@@ -84,12 +90,16 @@ export class TasksService {
    * source) column server-side so positions never collide, regardless of
    * the raw `position` integer the client sent.
    */
-  async updateStatus(user: AuthenticatedUser, taskId: string, dto: UpdateTaskStatusDto) {
+  async updateStatus(
+    user: AuthenticatedUser,
+    taskId: string,
+    dto: UpdateTaskStatusDto,
+  ) {
     const task = await this.prisma.task.findFirst({
       where: { id: taskId, tenantId: user.tenantId },
     });
     if (!task) {
-      throw new NotFoundException('Task not found.');
+      throw new NotFoundException("Task not found.");
     }
 
     const statusChanged = task.status !== dto.status;
@@ -97,33 +107,49 @@ export class TasksService {
     const willBeDone = dto.status === TaskStatus.DONE;
 
     const destinationSiblings = await this.prisma.task.findMany({
-      where: { projectId: task.projectId, status: dto.status, id: { not: taskId } },
-      orderBy: { position: 'asc' },
+      where: {
+        projectId: task.projectId,
+        status: dto.status,
+        id: { not: taskId },
+      },
+      orderBy: { position: "asc" },
       select: { id: true },
     });
 
-    const insertIndex = Math.min(Math.max(dto.position, 0), destinationSiblings.length);
+    const insertIndex = Math.min(
+      Math.max(dto.position, 0),
+      destinationSiblings.length,
+    );
     const reordered = [...destinationSiblings];
     reordered.splice(insertIndex, 0, { id: taskId });
 
-    const sourceSiblings =
-      statusChanged
-        ? await this.prisma.task.findMany({
-            where: { projectId: task.projectId, status: task.status, id: { not: taskId } },
-            orderBy: { position: 'asc' },
-            select: { id: true },
-          })
-        : [];
+    const sourceSiblings = statusChanged
+      ? await this.prisma.task.findMany({
+          where: {
+            projectId: task.projectId,
+            status: task.status,
+            id: { not: taskId },
+          },
+          orderBy: { position: "asc" },
+          select: { id: true },
+        })
+      : [];
 
     await this.prisma.$transaction([
       ...reordered.map((t, index) =>
         this.prisma.task.update({
           where: { id: t.id },
-          data: t.id === taskId ? { status: dto.status, position: index } : { position: index },
+          data:
+            t.id === taskId
+              ? { status: dto.status, position: index }
+              : { position: index },
         }),
       ),
       ...sourceSiblings.map((t, index) =>
-        this.prisma.task.update({ where: { id: t.id }, data: { position: index } }),
+        this.prisma.task.update({
+          where: { id: t.id },
+          data: { position: index },
+        }),
       ),
     ]);
 

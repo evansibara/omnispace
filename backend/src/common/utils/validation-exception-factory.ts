@@ -1,5 +1,8 @@
-import { ValidationError } from 'class-validator';
-import { ValidationException, FieldError } from '../exceptions/validation.exception';
+import { ValidationError } from "class-validator";
+import {
+  ValidationException,
+  FieldError,
+} from "../exceptions/validation.exception";
 
 /**
  * Passed as `exceptionFactory` to the global ValidationPipe. Maps
@@ -7,10 +10,12 @@ import { ValidationException, FieldError } from '../exceptions/validation.except
  * shape the frontend expects: { field, message }, taking the first
  * constraint message per field.
  */
-export function validationExceptionFactory(validationErrors: ValidationError[] = []): ValidationException {
+export function validationExceptionFactory(
+  validationErrors: ValidationError[] = [],
+): ValidationException {
   const errors: FieldError[] = [];
 
-  const collect = (errs: ValidationError[], parentPath = ''): void => {
+  const collect = (errs: ValidationError[], parentPath = ""): void => {
     for (const err of errs) {
       const field = parentPath ? `${parentPath}.${err.property}` : err.property;
       if (err.constraints) {

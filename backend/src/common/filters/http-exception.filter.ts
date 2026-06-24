@@ -5,9 +5,9 @@ import {
   HttpException,
   HttpStatus,
   Logger,
-} from '@nestjs/common';
-import { Response } from 'express';
-import { FieldError } from '../exceptions/validation.exception';
+} from "@nestjs/common";
+import { Response } from "express";
+import { FieldError } from "../exceptions/validation.exception";
 
 interface ErrorEnvelope {
   success: false;
@@ -24,33 +24,36 @@ interface ErrorEnvelope {
  */
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger('ExceptionFilter');
+  private readonly logger = new Logger("ExceptionFilter");
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Internal server error';
+    let message = "Internal server error";
     let errors: FieldError[] | undefined;
 
     if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
       const body = exception.getResponse();
 
-      if (typeof body === 'string') {
+      if (typeof body === "string") {
         message = body;
-      } else if (typeof body === 'object' && body !== null) {
+      } else if (typeof body === "object" && body !== null) {
         const payload = body as Record<string, unknown>;
 
         if (Array.isArray(payload.errors)) {
           // ValidationException shape: { message: 'Validation failed', errors: [...] }
           errors = payload.errors as FieldError[];
-          message = (payload.message as string) ?? 'Validation failed';
+          message = (payload.message as string) ?? "Validation failed";
         } else if (Array.isArray(payload.message)) {
           // Defensive fallback for Nest's default ValidationPipe shape
-          message = 'Validation failed';
-          errors = (payload.message as string[]).map((m) => ({ field: 'unknown', message: m }));
+          message = "Validation failed";
+          errors = (payload.message as string[]).map((m) => ({
+            field: "unknown",
+            message: m,
+          }));
         } else {
           message = (payload.message as string) ?? exception.message;
         }
@@ -61,7 +64,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = exception.message;
       this.logger.error(exception.message, exception.stack);
     } else {
-      this.logger.error('Unknown exception thrown', JSON.stringify(exception));
+      this.logger.error("Unknown exception thrown", JSON.stringify(exception));
     }
 
     const envelope: ErrorEnvelope = {

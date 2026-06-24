@@ -1,5 +1,5 @@
-import { Controller, Get } from '@nestjs/common';
-import { Public } from './common/decorators/public.decorator';
+import { Controller, Get } from "@nestjs/common";
+import { Public } from "./common/decorators/public.decorator";
 
 /**
  * HealthController
@@ -12,13 +12,13 @@ import { Public } from './common/decorators/public.decorator';
  * For a more thorough health check (DB + Redis connectivity),
  * consider integrating @nestjs/terminus in the future.
  */
-@Controller('health')
+@Controller("health")
 export class HealthController {
   @Public()
   @Get()
   check(): { status: string; timestamp: string; uptime: number } {
     return {
-      status: 'ok',
+      status: "ok",
       timestamp: new Date().toISOString(),
       uptime: Math.floor(process.uptime()),
     };

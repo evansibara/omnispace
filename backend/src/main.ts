@@ -1,11 +1,11 @@
-import { NestFactory } from '@nestjs/core';
-import { ConfigService } from '@nestjs/config';
-import { ValidationPipe } from '@nestjs/common';
-import cookieParser from 'cookie-parser';
-import helmet from 'helmet';
-import compression from 'compression';
-import { AppModule } from './app.module';
-import { validationExceptionFactory } from './common/utils/validation-exception-factory';
+import { NestFactory } from "@nestjs/core";
+import { ConfigService } from "@nestjs/config";
+import { ValidationPipe } from "@nestjs/common";
+import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import compression from "compression";
+import { AppModule } from "./app.module";
+import { validationExceptionFactory } from "./common/utils/validation-exception-factory";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,9 +15,9 @@ async function bootstrap() {
   app.use(
     helmet({
       // Allow cookies from the same origin for HttpOnly JWT cookie auth
-      crossOriginResourcePolicy: { policy: 'same-site' },
+      crossOriginResourcePolicy: { policy: "same-site" },
       // Content-Security-Policy: tighten per your needs in production
-      contentSecurityPolicy: process.env.NODE_ENV === 'production',
+      contentSecurityPolicy: process.env.NODE_ENV === "production",
     }),
   );
 
@@ -26,10 +26,10 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  app.setGlobalPrefix(config.get<string>('API_PREFIX', 'api/v1'));
+  app.setGlobalPrefix(config.get<string>("API_PREFIX", "api/v1"));
 
   app.enableCors({
-    origin: config.get<string>('FRONTEND_URL', 'http://localhost:5173'),
+    origin: config.get<string>("FRONTEND_URL", "http://localhost:5173"),
     credentials: true,
   });
 
@@ -41,9 +41,9 @@ async function bootstrap() {
     }),
   );
 
-  const port = config.get<number>('PORT', 3000);
-  const apiPrefix = config.get<string>('API_PREFIX', 'api/v1');
-  const env = config.get<string>('NODE_ENV', 'development');
+  const port = config.get<number>("PORT", 3000);
+  const apiPrefix = config.get<string>("API_PREFIX", "api/v1");
+  const env = config.get<string>("NODE_ENV", "development");
 
   await app.listen(port);
 

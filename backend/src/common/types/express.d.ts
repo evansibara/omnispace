@@ -1,4 +1,4 @@
-import { AuthenticatedUser } from './jwt-payload.interface';
+import { AuthenticatedUser } from "./jwt-payload.interface";
 
 declare global {
   namespace Express {

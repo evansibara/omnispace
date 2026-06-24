@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ThrottlerStorage } from '@nestjs/throttler';
-import { ThrottlerStorageRecord } from '@nestjs/throttler/dist/throttler-storage-record.interface';
-import Redis from 'ioredis';
-import { REDIS_CLIENT } from './redis.constants'; // <-- Diubah ke constants
+import { Inject, Injectable } from "@nestjs/common";
+import { ThrottlerStorage } from "@nestjs/throttler";
+import { ThrottlerStorageRecord } from "@nestjs/throttler/dist/throttler-storage-record.interface";
+import Redis from "ioredis";
+import { REDIS_CLIENT } from "./redis.constants"; // <-- Diubah ke constants
 
 /**
  * Redis-backed implementation of ThrottlerStorage so rate-limit counters

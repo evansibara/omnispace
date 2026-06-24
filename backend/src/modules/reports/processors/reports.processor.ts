@@ -1,8 +1,8 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { Logger } from '@nestjs/common';
-import { Job } from 'bullmq';
-import { PrismaService } from '../../../prisma/prisma.service';
-import { REPORTS_QUEUE } from '../reports.service';
+import { Processor, WorkerHost } from "@nestjs/bullmq";
+import { Logger } from "@nestjs/common";
+import { Job } from "bullmq";
+import { PrismaService } from "../../../prisma/prisma.service";
+import { REPORTS_QUEUE } from "../reports.service";
 
 interface GenerateReportJobData {
   reportJobId: string;
@@ -28,7 +28,7 @@ export class ReportsProcessor extends WorkerHost {
     try {
       await this.prisma.reportJob.update({
         where: { id: reportJobId },
-        data: { status: 'PROCESSING' },
+        data: { status: "PROCESSING" },
       });
 
       // Simulate PDF rendering time.
@@ -37,15 +37,18 @@ export class ReportsProcessor extends WorkerHost {
       await this.prisma.reportJob.update({
         where: { id: reportJobId },
         data: {
-          status: 'READY',
+          status: "READY",
           downloadUrl: `/files/reports/${reportJobId}.pdf`,
         },
       });
     } catch (error) {
-      this.logger.error(`Report job ${reportJobId} failed`, error instanceof Error ? error.stack : undefined);
+      this.logger.error(
+        `Report job ${reportJobId} failed`,
+        error instanceof Error ? error.stack : undefined,
+      );
       await this.prisma.reportJob.update({
         where: { id: reportJobId },
-        data: { status: 'FAILED' },
+        data: { status: "FAILED" },
       });
     }
   }

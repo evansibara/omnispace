@@ -1,4 +1,4 @@
-import { UserRole } from '@prisma/client';
+import { UserRole } from "@prisma/client";
 
 /** Shape encoded inside the signed JWT (kept inside the HttpOnly cookie). */
 export interface JwtPayload {

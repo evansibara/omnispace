@@ -1,5 +1,5 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { AuthenticatedUser } from '../types/jwt-payload.interface';
+import { createParamDecorator, ExecutionContext } from "@nestjs/common";
+import { AuthenticatedUser } from "../types/jwt-payload.interface";
 
 /** Injects `request.user` (set by JwtAuthGuard) into a controller method param. */
 export const CurrentUser = createParamDecorator(

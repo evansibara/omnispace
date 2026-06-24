@@ -1,13 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Queue } from 'bullmq';
-import { ReportJob, UserRole } from '@prisma/client';
-import { PrismaService } from '../../prisma/prisma.service';
-import { ProjectsService } from '../projects/projects.service';
-import { AuthenticatedUser } from '../../common/types/jwt-payload.interface';
-import { ReportJobDto } from './dto/report-job.interface';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
+import { ReportJob, UserRole } from "@prisma/client";
+import { PrismaService } from "../../prisma/prisma.service";
+import { ProjectsService } from "../projects/projects.service";
+import { AuthenticatedUser } from "../../common/types/jwt-payload.interface";
+import { ReportJobDto } from "./dto/report-job.interface";
 
-export const REPORTS_QUEUE = 'reports';
+export const REPORTS_QUEUE = "reports";
 
 @Injectable()
 export class ReportsService {
@@ -17,12 +17,15 @@ export class ReportsService {
     @InjectQueue(REPORTS_QUEUE) private readonly reportsQueue: Queue,
   ) {}
 
-  async requestMonthlyReport(user: AuthenticatedUser, projectId: string): Promise<ReportJobDto> {
+  async requestMonthlyReport(
+    user: AuthenticatedUser,
+    projectId: string,
+  ): Promise<ReportJobDto> {
     await this.assertCanAccessProject(user, projectId);
 
-    const periodLabel = new Date().toLocaleDateString('en-US', {
-      month: 'long',
-      year: 'numeric',
+    const periodLabel = new Date().toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
     });
 
     const job = await this.prisma.reportJob.create({
@@ -30,14 +33,14 @@ export class ReportsService {
         tenantId: user.tenantId,
         projectId,
         periodLabel,
-        status: 'QUEUED',
+        status: "QUEUED",
       },
     });
 
     // Fire-and-forget: the worker moves QUEUED -> PROCESSING -> READY/FAILED
     // asynchronously so this request never blocks on PDF generation.
     await this.reportsQueue.add(
-      'generate-monthly-report',
+      "generate-monthly-report",
       { reportJobId: job.id },
       { jobId: job.id, removeOnComplete: true, removeOnFail: true },
     );
@@ -45,12 +48,15 @@ export class ReportsService {
     return this.toDto(job);
   }
 
-  async getStatus(user: AuthenticatedUser, jobId: string): Promise<ReportJobDto> {
+  async getStatus(
+    user: AuthenticatedUser,
+    jobId: string,
+  ): Promise<ReportJobDto> {
     const job = await this.prisma.reportJob.findFirst({
       where: { id: jobId, tenantId: user.tenantId },
     });
     if (!job) {
-      throw new NotFoundException('Report job not found.');
+      throw new NotFoundException("Report job not found.");
     }
 
     if (user.role === UserRole.CLIENT) {
@@ -60,7 +66,10 @@ export class ReportsService {
     return this.toDto(job);
   }
 
-  private async assertCanAccessProject(user: AuthenticatedUser, projectId: string): Promise<void> {
+  private async assertCanAccessProject(
+    user: AuthenticatedUser,
+    projectId: string,
+  ): Promise<void> {
     if (user.role === UserRole.CLIENT) {
       await this.projectsService.assertClientOwnsProject(user, projectId);
     } else {

@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { UserRole } from '@prisma/client';
-import { PrismaService } from '../../prisma/prisma.service';
-import { ProjectsService } from '../projects/projects.service';
-import { AuthenticatedUser } from '../../common/types/jwt-payload.interface';
-import { CreateCommentDto } from './dto/create-comment.dto';
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { UserRole } from "@prisma/client";
+import { PrismaService } from "../../prisma/prisma.service";
+import { ProjectsService } from "../projects/projects.service";
+import { AuthenticatedUser } from "../../common/types/jwt-payload.interface";
+import { CreateCommentDto } from "./dto/create-comment.dto";
 
 @Injectable()
 export class CommentsService {
@@ -17,8 +17,12 @@ export class CommentsService {
 
     const comments = await this.prisma.comment.findMany({
       where: { projectId, tenantId: user.tenantId },
-      include: { author: { select: { id: true, fullName: true, avatarUrl: true, role: true } } },
-      orderBy: { createdAt: 'asc' },
+      include: {
+        author: {
+          select: { id: true, fullName: true, avatarUrl: true, role: true },
+        },
+      },
+      orderBy: { createdAt: "asc" },
     });
 
     return comments.map((c: (typeof comments)[number]) => ({
@@ -38,11 +42,17 @@ export class CommentsService {
 
     if (dto.taskId) {
       const task = await this.prisma.task.findFirst({
-        where: { id: dto.taskId, projectId: dto.projectId, tenantId: user.tenantId },
+        where: {
+          id: dto.taskId,
+          projectId: dto.projectId,
+          tenantId: user.tenantId,
+        },
         select: { id: true },
       });
       if (!task) {
-        throw new BadRequestException('taskId does not belong to the specified project.');
+        throw new BadRequestException(
+          "taskId does not belong to the specified project.",
+        );
       }
     }
 
@@ -54,7 +64,11 @@ export class CommentsService {
         authorId: user.id,
         body: dto.body,
       },
-      include: { author: { select: { id: true, fullName: true, avatarUrl: true, role: true } } },
+      include: {
+        author: {
+          select: { id: true, fullName: true, avatarUrl: true, role: true },
+        },
+      },
     });
 
     if (dto.taskId) {
@@ -74,7 +88,10 @@ export class CommentsService {
     };
   }
 
-  private async assertCanAccessProject(user: AuthenticatedUser, projectId: string): Promise<void> {
+  private async assertCanAccessProject(
+    user: AuthenticatedUser,
+    projectId: string,
+  ): Promise<void> {
     if (user.role === UserRole.CLIENT) {
       await this.projectsService.assertClientOwnsProject(user, projectId);
     } else {

@@ -25,7 +25,7 @@ export default function ProjectDetailPage() {
   if (isError || !project) {
     return (
       <div className="p-6">
-        <p className="text-sm text-[var(--color-priority-high)]">
+        <p className="text-sm text-priority-high">
           Couldn't load this project. It may have been removed, or you may not have access.
         </p>
       </div>
@@ -40,18 +40,18 @@ export default function ProjectDetailPage() {
         actions={<ProjectStatusBadge status={project.status} />}
       />
 
-      <div className="border-b border-[var(--color-border-subtle)] bg-white px-6 py-4">
+      <div className="border-b border-(--color-border-subtle) bg-white px-6 py-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-xl text-sm text-[var(--color-text-secondary)]">{project.description}</p>
+          <p className="max-w-xl text-sm text-(--color-text-secondary)">{project.description}</p>
           <div className="flex items-center gap-6">
             <div>
-              <p className="text-xs text-[var(--color-text-muted)]">Deadline</p>
-              <p className="font-mono text-sm font-medium text-[var(--color-text-primary)]">
+              <p className="text-xs text-text-muted">Deadline</p>
+              <p className="font-mono text-sm font-medium text-(--color-text-primary)">
                 {formatDate(project.targetDeadline)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-[var(--color-text-muted)]">Team</p>
+              <p className="text-xs text-text-muted">Team</p>
               <AvatarStack people={project.team} />
             </div>
           </div>

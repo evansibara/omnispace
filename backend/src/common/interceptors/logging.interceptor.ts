@@ -4,10 +4,10 @@ import {
   ExecutionContext,
   CallHandler,
   Logger,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { Request, Response } from 'express';
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { tap } from "rxjs/operators";
+import { Request, Response } from "express";
 
 /**
  * LoggingInterceptor
@@ -25,7 +25,7 @@ import { Request, Response } from 'express';
  */
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  private readonly logger = new Logger('HTTP');
+  private readonly logger = new Logger("HTTP");
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const ctx = context.switchToHttp();
@@ -45,8 +45,8 @@ export class LoggingInterceptor implements NestInterceptor {
           const duration = Date.now() - start;
           const status = response.statusCode;
           const identity = user?.id
-            ? `userId=${user.id} tenantId=${user.tenantId ?? '?'}`
-            : 'anonymous';
+            ? `userId=${user.id} tenantId=${user.tenantId ?? "?"}`
+            : "anonymous";
 
           this.logger.log(
             `${method} ${url} → ${status} | ${duration}ms | ${identity}`,
@@ -56,8 +56,8 @@ export class LoggingInterceptor implements NestInterceptor {
           const duration = Date.now() - start;
           const status = err?.status ?? 500;
           const identity = user?.id
-            ? `userId=${user.id} tenantId=${user.tenantId ?? '?'}`
-            : 'anonymous';
+            ? `userId=${user.id} tenantId=${user.tenantId ?? "?"}`
+            : "anonymous";
 
           this.logger.warn(
             `${method} ${url} → ${status} | ${duration}ms | ${identity}`,

@@ -14,12 +14,16 @@ const ProjectDetailPage = lazy(() => import("@/features/projects/pages/ProjectDe
 const TeamManagementPage = lazy(() => import("@/features/team/pages/TeamManagementPage"));
 const BillingPage = lazy(() => import("@/features/team/pages/BillingPage"));
 const ClientPortalPage = lazy(() => import("@/features/portal/pages/ClientPortalPage"));
+// ↓ Halaman baru untuk CLIENT
+const FeedbackPage = lazy(() => import("@/features/portal/pages/FeedbackPage"));
+const ReportsPage = lazy(() => import("@/features/portal/pages/ReportsPage"));
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/dashboard" replace /> },
   { path: "/login", element: withSuspense(<LoginPage />) },
   { path: "/register", element: withSuspense(<RegisterTenantPage />) },
 
+  // ─── Internal routes (SUPER_ADMIN, PROJECT_MANAGER, DEVELOPER) ────────────
   {
     element: <ProtectedRoute allowedRoles={["SUPER_ADMIN", "PROJECT_MANAGER", "DEVELOPER"]} />,
     children: [
@@ -41,12 +45,17 @@ export const router = createBrowserRouter([
     ],
   },
 
+  // ─── Client Portal routes (CLIENT only) ──────────────────────────────────
   {
     element: <ProtectedRoute allowedRoles={["CLIENT"]} />,
     children: [
       {
         element: <AppShell />,
-        children: [{ path: "/portal", element: withSuspense(<ClientPortalPage />) }],
+        children: [
+          { path: "/portal", element: withSuspense(<ClientPortalPage />) },
+          { path: "/portal/feedback", element: withSuspense(<FeedbackPage />) },  // ← BARU
+          { path: "/portal/reports", element: withSuspense(<ReportsPage />) },    // ← BARU
+        ],
       },
     ],
   },

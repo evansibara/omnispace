@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException } from "@nestjs/common";
 
 export interface FieldError {
   field: string;
@@ -11,6 +11,6 @@ export interface FieldError {
  */
 export class ValidationException extends BadRequestException {
   constructor(public readonly errors: FieldError[]) {
-    super({ message: 'Validation failed', errors });
+    super({ message: "Validation failed", errors });
   }
 }

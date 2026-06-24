@@ -1,4 +1,4 @@
-import { TenantPlan, UserRole } from '@prisma/client';
+import { TenantPlan, UserRole } from "@prisma/client";
 
 export interface SessionUser {
   id: string;

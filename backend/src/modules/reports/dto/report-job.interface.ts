@@ -1,4 +1,4 @@
-import { ReportJobStatus } from '@prisma/client';
+import { ReportJobStatus } from "@prisma/client";
 
 export interface ReportJobDto {
   id: string;

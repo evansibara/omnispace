@@ -1,5 +1,5 @@
-import { IsDateString, IsEnum, IsOptional } from 'class-validator';
-import { ProjectStatus } from '@prisma/client';
+import { IsDateString, IsEnum, IsOptional } from "class-validator";
+import { ProjectStatus } from "@prisma/client";
 
 export class UpdateProjectDto {
   @IsOptional()
@@ -9,10 +9,10 @@ export class UpdateProjectDto {
   description?: string;
 
   @IsOptional()
-  @IsEnum(ProjectStatus, { message: 'status must be a valid project status' })
+  @IsEnum(ProjectStatus, { message: "status must be a valid project status" })
   status?: ProjectStatus;
 
   @IsOptional()
-  @IsDateString({}, { message: 'targetDeadline must be a valid ISO 8601 date' })
+  @IsDateString({}, { message: "targetDeadline must be a valid ISO 8601 date" })
   targetDeadline?: string;
 }

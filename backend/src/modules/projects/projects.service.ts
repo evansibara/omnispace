@@ -1,14 +1,22 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, ProjectStatus } from '@prisma/client';
-import { PrismaService } from '../../prisma/prisma.service';
-import { AuthenticatedUser } from '../../common/types/jwt-payload.interface';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
-import { QueryProjectsDto } from './dto/query-projects.dto';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { Prisma, ProjectStatus } from "@prisma/client";
+import { PrismaService } from "../../prisma/prisma.service";
+import { AuthenticatedUser } from "../../common/types/jwt-payload.interface";
+import { CreateProjectDto } from "./dto/create-project.dto";
+import { UpdateProjectDto } from "./dto/update-project.dto";
+import { QueryProjectsDto } from "./dto/query-projects.dto";
 
 const projectSummaryInclude = {
   client: { select: { id: true, companyName: true } },
-  team: { include: { user: { select: { id: true, fullName: true, avatarUrl: true } } } },
+  team: {
+    include: {
+      user: { select: { id: true, fullName: true, avatarUrl: true } },
+    },
+  },
 } satisfies Prisma.ProjectInclude;
 
 const projectFullInclude = {
@@ -16,15 +24,25 @@ const projectFullInclude = {
     select: {
       id: true,
       companyName: true,
-      contactUser: { select: { id: true, fullName: true, email: true, avatarUrl: true } },
+      contactUser: {
+        select: { id: true, fullName: true, email: true, avatarUrl: true },
+      },
     },
   },
   projectManager: { select: { id: true, fullName: true, avatarUrl: true } },
-  team: { include: { user: { select: { id: true, fullName: true, avatarUrl: true } } } },
+  team: {
+    include: {
+      user: { select: { id: true, fullName: true, avatarUrl: true } },
+    },
+  },
 } satisfies Prisma.ProjectInclude;
 
-type ProjectWithSummaryRelations = Prisma.ProjectGetPayload<{ include: typeof projectSummaryInclude }>;
-type ProjectWithFullRelations = Prisma.ProjectGetPayload<{ include: typeof projectFullInclude }>;
+type ProjectWithSummaryRelations = Prisma.ProjectGetPayload<{
+  include: typeof projectSummaryInclude;
+}>;
+type ProjectWithFullRelations = Prisma.ProjectGetPayload<{
+  include: typeof projectFullInclude;
+}>;
 
 @Injectable()
 export class ProjectsService {
@@ -37,9 +55,9 @@ export class ProjectsService {
     const where: Prisma.ProjectWhereInput = { tenantId: user.tenantId };
 
     if (query.search) {
-      where.title = { contains: query.search, mode: 'insensitive' };
+      where.title = { contains: query.search, mode: "insensitive" };
     }
-    if (query.status && query.status !== 'ALL') {
+    if (query.status && query.status !== "ALL") {
       where.status = query.status as ProjectStatus;
     }
     if (query.teamMemberId) {
@@ -50,7 +68,7 @@ export class ProjectsService {
       this.prisma.project.findMany({
         where,
         include: projectSummaryInclude,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -74,7 +92,7 @@ export class ProjectsService {
       include: projectFullInclude,
     });
     if (!project) {
-      throw new NotFoundException('Project not found.');
+      throw new NotFoundException("Project not found.");
     }
     return this.toFull(project);
   }
@@ -84,14 +102,14 @@ export class ProjectsService {
       where: { id: dto.clientId, tenantId: user.tenantId },
     });
     if (!client) {
-      throw new NotFoundException('Client not found.');
+      throw new NotFoundException("Client not found.");
     }
 
     const project = await this.prisma.project.create({
       data: {
         tenantId: user.tenantId,
         title: dto.title,
-        description: dto.description ?? '',
+        description: dto.description ?? "",
         clientId: dto.clientId,
         projectManagerId: user.id,
         targetDeadline: new Date(dto.targetDeadline),
@@ -109,9 +127,13 @@ export class ProjectsService {
       where: { id },
       data: {
         ...(dto.title !== undefined ? { title: dto.title } : {}),
-        ...(dto.description !== undefined ? { description: dto.description } : {}),
+        ...(dto.description !== undefined
+          ? { description: dto.description }
+          : {}),
         ...(dto.status !== undefined ? { status: dto.status } : {}),
-        ...(dto.targetDeadline !== undefined ? { targetDeadline: new Date(dto.targetDeadline) } : {}),
+        ...(dto.targetDeadline !== undefined
+          ? { targetDeadline: new Date(dto.targetDeadline) }
+          : {}),
       },
       include: projectFullInclude,
     });
@@ -130,9 +152,10 @@ export class ProjectsService {
   async recomputeCompletionStats(projectId: string): Promise<void> {
     const [taskCount, taskCountDone] = await Promise.all([
       this.prisma.task.count({ where: { projectId } }),
-      this.prisma.task.count({ where: { projectId, status: 'DONE' } }),
+      this.prisma.task.count({ where: { projectId, status: "DONE" } }),
     ]);
-    const completionRate = taskCount > 0 ? Math.round((taskCountDone / taskCount) * 100) : 0;
+    const completionRate =
+      taskCount > 0 ? Math.round((taskCountDone / taskCount) * 100) : 0;
 
     await this.prisma.project.update({
       where: { id: projectId },
@@ -147,25 +170,30 @@ export class ProjectsService {
       select: { id: true },
     });
     if (!project) {
-      throw new NotFoundException('Project not found.');
+      throw new NotFoundException("Project not found.");
     }
   }
 
   /** Used by the client portal: ensures a CLIENT caller owns the given project. */
-  async assertClientOwnsProject(user: AuthenticatedUser, projectId: string): Promise<void> {
+  async assertClientOwnsProject(
+    user: AuthenticatedUser,
+    projectId: string,
+  ): Promise<void> {
     const clientOrg = await this.prisma.clientOrganization.findUnique({
       where: { contactUserId: user.id },
       select: { id: true },
     });
     if (!clientOrg) {
-      throw new ForbiddenException('No client organization is associated with this account.');
+      throw new ForbiddenException(
+        "No client organization is associated with this account.",
+      );
     }
     const project = await this.prisma.project.findFirst({
       where: { id: projectId, tenantId: user.tenantId, clientId: clientOrg.id },
       select: { id: true },
     });
     if (!project) {
-      throw new NotFoundException('Project not found.');
+      throw new NotFoundException("Project not found.");
     }
   }
 
@@ -178,12 +206,17 @@ export class ProjectsService {
       targetDeadline: project.targetDeadline.toISOString(),
       taskCount: project.taskCount,
       taskCountDone: project.taskCountDone,
-      client: { id: project.client.id, companyName: project.client.companyName },
-      team: project.team.map((t: ProjectWithSummaryRelations['team'][number]) => ({
-        id: t.user.id,
-        fullName: t.user.fullName,
-        avatarUrl: t.user.avatarUrl,
-      })),
+      client: {
+        id: project.client.id,
+        companyName: project.client.companyName,
+      },
+      team: project.team.map(
+        (t: ProjectWithSummaryRelations["team"][number]) => ({
+          id: t.user.id,
+          fullName: t.user.fullName,
+          avatarUrl: t.user.avatarUrl,
+        }),
+      ),
     };
   }
 
@@ -209,7 +242,7 @@ export class ProjectsService {
         fullName: project.projectManager.fullName,
         avatarUrl: project.projectManager.avatarUrl,
       },
-      team: project.team.map((t: ProjectWithFullRelations['team'][number]) => ({
+      team: project.team.map((t: ProjectWithFullRelations["team"][number]) => ({
         id: t.user.id,
         fullName: t.user.fullName,
         avatarUrl: t.user.avatarUrl,

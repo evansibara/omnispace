@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { AuthenticatedUser } from '../../common/types/jwt-payload.interface';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import { AuthenticatedUser } from "../../common/types/jwt-payload.interface";
 
 @Injectable()
 export class ClientsService {
@@ -10,7 +10,7 @@ export class ClientsService {
     const clients = await this.prisma.clientOrganization.findMany({
       where: { tenantId: user.tenantId },
       select: { id: true, companyName: true },
-      orderBy: { companyName: 'asc' },
+      orderBy: { companyName: "asc" },
     });
     return clients;
   }

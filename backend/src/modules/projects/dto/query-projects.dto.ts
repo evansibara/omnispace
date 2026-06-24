@@ -1,5 +1,5 @@
-import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsUUID, Min } from 'class-validator';
+import { Type } from "class-transformer";
+import { IsIn, IsInt, IsOptional, IsUUID, Min } from "class-validator";
 
 export class QueryProjectsDto {
   @IsOptional()
@@ -18,8 +18,8 @@ export class QueryProjectsDto {
   search?: string;
 
   @IsOptional()
-  @IsIn(['PLANNING', 'ACTIVE', 'ON_HOLD', 'COMPLETED', 'ALL'])
-  status?: 'PLANNING' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED' | 'ALL';
+  @IsIn(["PLANNING", "ACTIVE", "ON_HOLD", "COMPLETED", "ALL"])
+  status?: "PLANNING" | "ACTIVE" | "ON_HOLD" | "COMPLETED" | "ALL";
 
   @IsOptional()
   @IsUUID()

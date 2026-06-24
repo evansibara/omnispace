@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
-import { PortalController } from './portal.controller';
-import { PortalService } from './portal.service';
-import { ProjectsModule } from '../projects/projects.module';
+import { Module } from "@nestjs/common";
+import { PortalController } from "./portal.controller";
+import { PortalService } from "./portal.service";
+import { ProjectsModule } from "../projects/projects.module";
 
 @Module({
   imports: [ProjectsModule],

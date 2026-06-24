@@ -3,13 +3,13 @@ import {
   ExecutionContext,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import { Reflector } from '@nestjs/core';
-import { Request } from 'express';
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
-import { JwtPayload } from '../types/jwt-payload.interface';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
+import { Reflector } from "@nestjs/core";
+import { Request } from "express";
+import { IS_PUBLIC_KEY } from "../decorators/public.decorator";
+import { JwtPayload } from "../types/jwt-payload.interface";
 
 /**
  * Global guard: decodes the multi-tenant JWT from the HttpOnly cookie and
@@ -37,16 +37,19 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<Request>();
-    const cookieName = this.configService.get<string>('COOKIE_NAME', 'access_token');
+    const cookieName = this.configService.get<string>(
+      "COOKIE_NAME",
+      "access_token",
+    );
     const token = request.cookies?.[cookieName];
 
     if (!token) {
-      throw new UnauthorizedException('Authentication required.');
+      throw new UnauthorizedException("Authentication required.");
     }
 
     try {
       const payload = this.jwtService.verify<JwtPayload>(token, {
-        secret: this.configService.get<string>('JWT_SECRET'),
+        secret: this.configService.get<string>("JWT_SECRET"),
       });
       request.user = {
         id: payload.sub,
@@ -55,7 +58,7 @@ export class JwtAuthGuard implements CanActivate {
       };
       return true;
     } catch {
-      throw new UnauthorizedException('Invalid or expired session.');
+      throw new UnauthorizedException("Invalid or expired session.");
     }
   }
 }

@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { UserRole } from '@prisma/client';
-import { PrismaService } from '../../prisma/prisma.service';
-import { AuthenticatedUser } from '../../common/types/jwt-payload.interface';
+import { Injectable } from "@nestjs/common";
+import { UserRole } from "@prisma/client";
+import { PrismaService } from "../../prisma/prisma.service";
+import { AuthenticatedUser } from "../../common/types/jwt-payload.interface";
 
 @Injectable()
 export class TeamService {
@@ -10,7 +10,7 @@ export class TeamService {
   async findAll(user: AuthenticatedUser) {
     const members = await this.prisma.user.findMany({
       where: { tenantId: user.tenantId, role: { not: UserRole.CLIENT } },
-      orderBy: { fullName: 'asc' },
+      orderBy: { fullName: "asc" },
     });
 
     return members.map((m) => ({
