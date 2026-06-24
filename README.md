@@ -4,8 +4,8 @@
 
 **B2B Multi-Tenant Workspace & Client Portal Engine**
 
-[![CI](https://github.com/xeesoxee/omnispace/actions/workflows/ci.yml/badge.svg)](https://github.com/xeesoxee/omnispace/actions/workflows/ci.yml)
-[![CD](https://github.com/xeesoxee/omnispace/actions/workflows/cd.yml/badge.svg)](https://github.com/xeesoxee/omnispace/actions/workflows/cd.yml)
+[![CI](https://github.com/evansibara/omnispace/actions/workflows/ci.yml/badge.svg)](https://github.com/evansibara/omnispace/actions/workflows/ci.yml)
+[![CD](https://github.com/evansibara/omnispace/actions/workflows/cd.yml/badge.svg)](https://github.com/evansibara/omnispace/actions/workflows/cd.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![NestJS](https://img.shields.io/badge/NestJS-10.x-E0234E?logo=nestjs&logoColor=white)](https://nestjs.com/)
 [![React](https://img.shields.io/badge/React-19.x-61DAFB?logo=react&logoColor=white)](https://react.dev/)
